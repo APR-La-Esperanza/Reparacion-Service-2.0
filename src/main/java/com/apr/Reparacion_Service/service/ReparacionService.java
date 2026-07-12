@@ -102,6 +102,23 @@ public class ReparacionService {
         return ReparacionMapper.toResponseDTO(actualizada);
     }
 
+    public Map<String, Object> notificarReparacion(Long id) {
+        Reparacion reparacion = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Reparación no encontrada con id: " + id));
+
+        Map<String, Object> notificacion = new HashMap<>();
+        notificacion.put("tipo", "NOTIFICACION_REPARACION");
+        notificacion.put("reparacionId", reparacion.getId());
+        notificacion.put("incidenciaId", reparacion.getIncidenciaId());
+        notificacion.put("estado", reparacion.getEstado());
+        notificacion.put("mensaje", String.format(
+                "Estimado socio: La reparación asociada a la incidencia %d ha finalizado con éxito (estado: %s). Servicio restablecido.",
+                reparacion.getIncidenciaId(),
+                reparacion.getEstado()));
+        notificacion.put("simulado", true);
+        return notificacion;
+    }
+
     public void eliminar(Long id) {
         Reparacion reparacion = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reparación no encontrada con id: " + id));

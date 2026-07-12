@@ -83,6 +83,15 @@ public class ReparacionController {
         return ResponseEntity.ok(service.actualizar(id, dto));
     }
 
+    @PostMapping("/{id}/notificar")
+    @Operation(summary = "Notificar reparación simulada", description = "Retorna una notificación simulada al socio de que la reparación asociada a su incidencia ha sido completada.")
+    @ApiResponse(responseCode = "200", description = "Mensaje simulado devuelto con éxito.")
+    @ApiResponse(responseCode = "404", description = "La reparación no existe.")
+    public ResponseEntity<java.util.Map<String, Object>> notificar(
+            @Parameter(description = "ID de la reparación a notificar", required = true) @PathVariable Long id) {
+        return ResponseEntity.ok(service.notificarReparacion(id));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar reparación", description = "Elimina permanentemente el registro de reparación técnica.")
     @ApiResponse(responseCode = "204", description = "Reparación eliminada con éxito.")
