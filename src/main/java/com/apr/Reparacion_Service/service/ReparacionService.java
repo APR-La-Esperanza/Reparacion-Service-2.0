@@ -20,14 +20,11 @@ import java.util.Map;
 public class ReparacionService {
 
     private final ReparacionRepository repository;
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient webClient;
 
-    @Value("${service.incidencia.url:http://incidencia-service}")
-    private String incidenciaServiceUrl;
-
-    public ReparacionService(ReparacionRepository repository, WebClient.Builder webClientBuilder) {
+    public ReparacionService(ReparacionRepository repository, WebClient webClient) {
         this.repository = repository;
-        this.webClientBuilder = webClientBuilder;
+        this.webClient = webClient;
     }
 
     public List<ReparacionResponseDTO> listarTodas() {
@@ -132,8 +129,8 @@ public class ReparacionService {
     @SuppressWarnings("unchecked")
     private Map<String, Object> obtenerIncidenciaDeIncidenciaService(Long incidenciaId) {
         try {
-            Map<String, Object> incidencia = webClientBuilder.build().get()
-                    .uri(incidenciaServiceUrl + "/incidencias/" + incidenciaId)
+            Map<String, Object> incidencia = webClient.get()
+                    .uri("/incidencias/" + incidenciaId)
                     .retrieve()
                     .bodyToMono(Map.class)
                     .block();
@@ -152,8 +149,8 @@ public class ReparacionService {
             Map<String, Object> requestBody = new HashMap<>(incidenciaOriginal);
             requestBody.put("estado", "RESUELTA");
 
-            webClientBuilder.build().put()
-                    .uri(incidenciaServiceUrl + "/incidencias/" + incidenciaId)
+            webClient.put()
+                    .uri("/incidencias/" + incidenciaId)
                     .bodyValue(requestBody)
                     .retrieve()
                     .toBodilessEntity()
