@@ -7,6 +7,7 @@ import com.apr.Reparacion_Service.mapper.ReparacionMapper;
 import com.apr.Reparacion_Service.model.EstadoReparacion;
 import com.apr.Reparacion_Service.model.Reparacion;
 import com.apr.Reparacion_Service.repository.ReparacionRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -20,6 +21,9 @@ public class ReparacionService {
 
     private final ReparacionRepository repository;
     private final WebClient.Builder webClientBuilder;
+
+    @Value("${service.incidencia.url:http://incidencia-service}")
+    private String incidenciaServiceUrl;
 
     public ReparacionService(ReparacionRepository repository, WebClient.Builder webClientBuilder) {
         this.repository = repository;
@@ -129,7 +133,7 @@ public class ReparacionService {
     private Map<String, Object> obtenerIncidenciaDeIncidenciaService(Long incidenciaId) {
         try {
             Map<String, Object> incidencia = webClientBuilder.build().get()
-                    .uri("http://incidencia-service/incidencias/" + incidenciaId)
+                    .uri(incidenciaServiceUrl + "/incidencias/" + incidenciaId)
                     .retrieve()
                     .bodyToMono(Map.class)
                     .block();
@@ -149,7 +153,7 @@ public class ReparacionService {
             requestBody.put("estado", "RESUELTA");
 
             webClientBuilder.build().put()
-                    .uri("http://incidencia-service/incidencias/" + incidenciaId)
+                    .uri(incidenciaServiceUrl + "/incidencias/" + incidenciaId)
                     .bodyValue(requestBody)
                     .retrieve()
                     .toBodilessEntity()
